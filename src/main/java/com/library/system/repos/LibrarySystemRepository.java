@@ -15,4 +15,6 @@ public interface LibrarySystemRepository extends JpaRepository<BookDetails, Inte
 	public String[] findGenres();
 	
 	public List<BookDetails> findByGenre(String genre);
+	
+	public BookDetails findByBookName(String bookName);
 }

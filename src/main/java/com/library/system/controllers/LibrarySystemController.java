@@ -42,6 +42,6 @@ public class LibrarySystemController {
 	@GetMapping("/getBooksByGenre/{genre}")
 	public List<BookDetails> getBookByGenre(@PathVariable String genre) {
 
-		return librarySystemService.getBooksByGenres(genre);
+		return librarySystemService.getBooksByGenre(genre);
 	}
 }

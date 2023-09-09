@@ -1,12 +1,13 @@
 package com.library.system.services;
 
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.library.system.entities.BookDetails;
+import com.library.system.exceptions.BookAlreadyExistingException;
 import com.library.system.exceptions.BookNotFoundException;
 import com.library.system.repos.LibrarySystemRepository;
 
@@ -17,6 +18,11 @@ public class LibrarySystemService {
 	private LibrarySystemRepository librarySystemRepository;
 
 	public void addNewBook(BookDetails bookDetails) {
+		
+		Optional<BookDetails> findByBookName = Optional.ofNullable(librarySystemRepository.findByBookName(bookDetails.getBookName()));
+		if(findByBookName.isPresent()) {
+			throw new BookAlreadyExistingException("Book already present!");
+		}
 		librarySystemRepository.save(bookDetails);
 
 	}
@@ -33,11 +39,21 @@ public class LibrarySystemService {
 	}
 
 	public String[] getGenres() {
-		return librarySystemRepository.findGenres();
+		String[] findGenres = librarySystemRepository.findGenres();
+		if(findGenres.length==0) {
+			throw new GenreNotFoundException("Genres not found in library!");
+		}
+		return findGenres;
 	}
 
-	public List<BookDetails> getBooksByGenres(String genre) {
+	public List<BookDetails> getBooksByGenre(String genre) {
 
-		return librarySystemRepository.findByGenre(genre);
+		List<BookDetails> books = librarySystemRepository.findByGenre(genre);
+		if(books.size()==0) {
+			throw new BookNotFoundException("Books not found with requested genre="+genre);
+		}
+		return books;
+			
 	}
 }
+
